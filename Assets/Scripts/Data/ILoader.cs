@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface ILoader : IService
 {
-    object Load<T>();
+    object Load<T>(object dataDefault);
 }

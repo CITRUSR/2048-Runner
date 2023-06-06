@@ -13,12 +13,17 @@ public class JsonLoader : ILoader
         _path = path;
     }
 
-    public object Load<T>()
+    public object Load<T>(object dataDefault)
     {
+        if (!File.Exists(Application.persistentDataPath + _path + ".json"))
+            File.Create(Application.persistentDataPath + _path + ".json").Close();
+
         using (var fileStream = new StreamReader(Application.persistentDataPath + _path + ".json"))
         {
             var json = fileStream.ReadToEnd();
             var data = JsonConvert.DeserializeObject<T>(json);
+            if (data == null)
+                return dataDefault;
             return data;
         }
     }

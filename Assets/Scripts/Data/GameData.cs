@@ -5,5 +5,5 @@ using UnityEngine;
 [System.Serializable]
 public class GameData
 {
-    public int Gems;
+    public int Gems = 0;
 }

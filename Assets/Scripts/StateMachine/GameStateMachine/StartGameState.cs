@@ -46,7 +46,7 @@ public class StartGameState : GameState
 
     private void Load()
     {
-        GameData loadData = (GameData)_loader.Load<GameData>();
+        GameData loadData = (GameData)_loader.Load<GameData>(new GameData());
         _gemCounter.SetGem(loadData.Gems);
     }
 }
