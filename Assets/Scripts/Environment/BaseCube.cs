@@ -14,7 +14,7 @@ public abstract class BaseCube : MonoBehaviour
     public virtual void UpPower(int PowerLevel)
     {
         Power += PowerLevel;
-        if (Power < ECubePower.e)
+        if (Power <= ECubePower.e)
             CubeRefresh();
     }
 

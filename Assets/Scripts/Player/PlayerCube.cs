@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerCube : BaseCube
 {
     [SerializeField] private Rigidbody _rb;
+    [SerializeField] private CubeAnimator _animator;
     private EventBus _eventBus;
     private PlayerStateMachine _playerStateMachine;
     private GameStateMachine _gameStateMachine;
@@ -24,14 +25,6 @@ public class PlayerCube : BaseCube
             if (IsActive)
             {
                 UpPower(1);
-                if (_playerStateMachine.CurrentState == _playerStateMachine.GetState<SingleMovementState>())
-                {
-                    _eventBus.Invoke(new PowerUpEvent(Power));
-                }
-                else
-                {
-                    _eventBus.Invoke(new PowerUpEvent(Power + 1));
-                }
                 Destroy(cube.gameObject);
             }
         }
@@ -40,15 +33,48 @@ public class PlayerCube : BaseCube
     public override void DownPower(int PowerLevel)
     {
         Power -= PowerLevel;
-        if (Power < 0)
+
+        if (Power > 0)
+        {
+            CubeRefresh();
+            _animator.PlaySizeAnimation();
+
+            if (_playerStateMachine.CurrentState == _playerStateMachine.GetState<SingleMovementState>())
+            {
+                _eventBus.Invoke(new PowerDownEvent(Power));
+            }
+            else
+            {
+                _eventBus.Invoke(new PowerDownEvent(Power - 1));
+            }
+        }
+        else
         {
             _gameStateMachine.SwitchState<LoseState>();
             Destroy(gameObject);
         }
+    }
+
+    public override void SetPower(ECubePower power)
+    {
+        base.SetPower(power);
+        _animator.PlaySizeAnimation();
+    }
+
+    public override void UpPower(int PowerLevel)
+    {
+        base.UpPower(PowerLevel);
+
+        if (_playerStateMachine.CurrentState == _playerStateMachine.GetState<SingleMovementState>())
+        {
+            _eventBus.Invoke(new PowerUpEvent(Power));
+        }
         else
         {
-            CubeRefresh();
+            _eventBus.Invoke(new PowerUpEvent(Power + 1));
         }
+
+        _animator.PlaySizeAnimation();
     }
 
     public void EnableKinematic()
